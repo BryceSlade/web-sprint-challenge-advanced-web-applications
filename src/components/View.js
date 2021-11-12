@@ -1,18 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-
+// import articleService from './../services/articleServices';
 import Article from './Article';
 import EditForm from './EditForm';
+import axiosWithAuth from './../utils/axiosWithAuth';
 
 const View = (props) => {
     const [articles, setArticles] = useState([]);
     const [editing, setEditing] = useState(false);
     const [editId, setEditId] = useState();
 
+    useEffect(() => {
+        axiosWithAuth()
+        .get('http://localhost:5000/api/articles')
+            .then(response => {
+                setArticles(response.data)
+            })
+            .catch(error => {
+                console.log(error.response)
+            });
+    }, [])
+
     const handleDelete = (id) => {
+        axiosWithAuth()
+            .delete(`http://localhost:5000/api/articles/${id}`)
+            .then(response => {
+                setArticles(response.data)
+            })
+            .catch(error => {
+                console.log(error.response)
+            });
     }
 
     const handleEdit = (article) => {
+        axiosWithAuth()
+            .put(`http://localhost:5000/api/articles/${editId}`, article)
+            .then(response => {
+                setEditing(false)
+                setArticles(response.data)
+            })
+            .catch(error => {
+                console.log(error.response)
+            });
     }
 
     const handleEditSelect = (id)=> {

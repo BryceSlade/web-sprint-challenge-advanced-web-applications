@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components';
 
@@ -14,7 +14,7 @@ const Login = () => {
     const [state, setState] = useState(initialState)
     const [error, setError] = useState('')
 
-    const {push} = useHistory();
+    const { push } = useHistory();
 
     const handleChange = event => {
         setState({
@@ -30,13 +30,10 @@ const Login = () => {
         axios.post('http://localhost:5000/api/login', state.credentials)
             .then(response => {
                 localStorage.setItem('token', response.data.token);
-                localStorage.setItem('role', response.data.role);
-                localStorage.setItem('token', response.data.username);
                 push('/view');
             })
             .catch(error => {
                 setError(error.response.data.error)
-                // console.log(error.response)
             })
     }
     
@@ -70,7 +67,7 @@ const Login = () => {
                         />
                     </Label>
                     <Button id='submit'>Log in</Button>
-                    <p id='error'>{error}</p>
+                    {error && <p id='error'>{error}</p>}
                 </FormGroup>
             </div>
         </ModalContainer>
