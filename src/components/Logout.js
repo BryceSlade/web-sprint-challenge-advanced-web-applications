@@ -12,7 +12,7 @@ const Logout = () => {
                 localStorage.removeItem('token');
                 push('/login');
             })
-    })
+    }, [])
 
     return(<div></div>);
 }
