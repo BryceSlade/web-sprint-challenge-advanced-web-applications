@@ -1,14 +1,82 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState} from 'react';
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components';
 
+const initialState = {
+    credentials: {
+        username: '',
+        password: ''
+    }
+}
+
 const Login = () => {
+    const [state, setState] = useState(initialState)
+    const [error, setError] = useState('')
+
+    const {push} = useHistory();
+
+    const handleChange = event => {
+        setState({
+            credentials: {
+            ...state.credentials,
+            [event.target.name]: event.target.value
+            }
+        })
+    }
+
+    const handleLogin = event => {
+        event.preventDefault();
+        axios.post('http://localhost:5000/api/login', state.credentials)
+            .then(response => {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('role', response.data.role);
+                localStorage.setItem('token', response.data.username);
+                push('/view');
+            })
+            .catch(error => {
+                setError(error.response.data.error)
+                // console.log(error.response)
+            })
+    }
     
-    return(<ComponentContainer>
+    return (
+
+    <ComponentContainer>
         <ModalContainer>
             <h1>Welcome to Blogger Pro</h1>
             <h2>Please enter your account information.</h2>
+
+            <div className='login-form'>
+                <FormGroup onSubmit={handleLogin}>
+
+                    <Label>Username
+                        <Input
+                            id='username'
+                            type='text'
+                            name='username'
+                            value={state.credentials.username}
+                            onChange={handleChange}
+                        />
+                    </Label>
+
+                    <Label>Password
+                        <Input
+                            id='password'
+                            type='password'
+                            name='password'
+                            value={state.credentials.password}
+                            onChange={handleChange}
+                        />
+                    </Label>
+                    <Button id='submit'>Log in</Button>
+                    <p id='error'>{error}</p>
+                </FormGroup>
+            </div>
         </ModalContainer>
-    </ComponentContainer>);
+    </ComponentContainer>
+
+    );
 }
 
 export default Login;
